@@ -13,6 +13,8 @@ bool processPacket(const PDU &pdu);
 
 //variables
 time_t start;
+unordered_map<string, string> srcTable;
+unordered_map<string, string> destTable;
 
 //structures
 struct tally{
@@ -45,6 +47,24 @@ bool processPacket(const PDU &pdu) {
 	//print to stdout
 	std::cout << ip.src_addr() << "  ->  " 
 		<< ip.dst_addr() << std::endl;
+
+	//if src not seen already, add it
+	//otherwise increment that src address' count
+	if (srcTable.count(ip.src_addr() == 0){
+		srcTable.emplace(ip.src_addr(), 1);
+	}
+	else {
+		srcTable[ip.src_addr()] += 1;
+	}
+
+	//if dest not seen already, add it
+	//otherwise increment that dest address' count
+	if (destTable.count(ip.src_addr() == 0){
+		destTable.emplace(ip.src_addr(), 1);
+	}
+	else {
+		destTable[ip.dest_addr()] += 1;
+	}
 
 	//continue
 	return true;
