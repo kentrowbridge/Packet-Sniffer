@@ -1,6 +1,7 @@
 #include <iostream>
 #include <tins/tins.h>
 #include <time.h>
+//#include <unordered_map>
 
 using namespace Tins;
 /////////////////////////////////
@@ -13,8 +14,8 @@ bool processPacket(const PDU &pdu);
 
 //variables
 time_t start;
-unordered_map<string, string> srcTable;
-unordered_map<string, string> destTable;
+//unordered_map<IPv4Address, int> srcTable;
+//unordered_map<IPv4Address, int> destTable;
 
 //structures
 struct tally{
@@ -26,8 +27,13 @@ int main(){
 	//set the start time of program
 	start = time(NULL);
 
+	//create configuration for sniffer
+	SnifferConfiguration config;
+	//set it to promiscuous mode
+	config.set_promisc_mode(true);
+
 	//create the packet sniffer to listen on wireless port
-	Sniffer sniffer("wlan0");
+	Sniffer sniffer("wlan0", config);
 
 	//each packet received will be processed
 	sniffer.sniff_loop(processPacket);
@@ -50,21 +56,21 @@ bool processPacket(const PDU &pdu) {
 
 	//if src not seen already, add it
 	//otherwise increment that src address' count
-	if (srcTable.count(ip.src_addr() == 0){
-		srcTable.emplace(ip.src_addr(), 1);
-	}
-	else {
-		srcTable[ip.src_addr()] += 1;
-	}
+	// if (srcTable.count(ip.src_addr() == 0){
+	// 	srcTable.emplace(ip.src_addr(), 1);
+	// }
+	// else {
+	// 	srcTable[ip.src_addr()] += 1;
+	// }
 
 	//if dest not seen already, add it
 	//otherwise increment that dest address' count
-	if (destTable.count(ip.src_addr() == 0){
-		destTable.emplace(ip.src_addr(), 1);
-	}
-	else {
-		destTable[ip.dest_addr()] += 1;
-	}
+	// if (destTable.count(ip.src_addr() == 0){
+	// 	destTable.emplace(ip.src_addr(), 1);
+	// }
+	// else {
+	// 	destTable[ip.dest_addr()] += 1;
+	// }
 
 	//continue
 	return true;
