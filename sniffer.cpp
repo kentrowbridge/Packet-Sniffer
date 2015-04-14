@@ -1,6 +1,7 @@
 #include <iostream>
 #include <tins/tins.h>
 #include <time.h>
+//#include "packetSniff.h"
 //#include <unordered_map>
 
 using namespace Tins;
@@ -12,16 +13,20 @@ using namespace Tins;
 //method declarations
 bool processPacket(const PDU &pdu);
 
-//variables
-time_t start;
-//unordered_map<IPv4Address, int> srcTable;
-//unordered_map<IPv4Address, int> destTable;
-
 //structures
 struct tally{
 	int count;
 	IPv4Address ipDest;
 };
+
+struct linkNode {
+	tally data;
+	linkNode * next;
+};
+
+//variables
+time_t start;
+linkNode* linkHead;
 
 int main(){
 	//set the start time of program
@@ -29,8 +34,10 @@ int main(){
 
 	//create configuration for sniffer
 	SnifferConfiguration config;
-	//set it to promiscuous mode
+	//make sniffer look at all packets over 
 	config.set_promisc_mode(true);
+
+	std::cout << "Got here" << std::endl;
 
 	//create the packet sniffer to listen on wireless port
 	Sniffer sniffer("wlan0", config);
@@ -45,7 +52,7 @@ int main(){
 //process each packet to calculate network usage
 bool processPacket(const PDU &pdu) {
 	//time check, if past 2 minutes, stop looping
-	if(difftime(time(NULL), start) >= 30)return false;
+	if(difftime(time(NULL), start) >= 120)return false;
 
 	//retrieve IP information from PDU
 	const IP &ip = pdu.rfind_pdu<IP>();
@@ -53,24 +60,6 @@ bool processPacket(const PDU &pdu) {
 	//print to stdout
 	std::cout << ip.src_addr() << "  ->  " 
 		<< ip.dst_addr() << std::endl;
-
-	//if src not seen already, add it
-	//otherwise increment that src address' count
-	// if (srcTable.count(ip.src_addr() == 0){
-	// 	srcTable.emplace(ip.src_addr(), 1);
-	// }
-	// else {
-	// 	srcTable[ip.src_addr()] += 1;
-	// }
-
-	//if dest not seen already, add it
-	//otherwise increment that dest address' count
-	// if (destTable.count(ip.src_addr() == 0){
-	// 	destTable.emplace(ip.src_addr(), 1);
-	// }
-	// else {
-	// 	destTable[ip.dest_addr()] += 1;
-	// }
 
 	//continue
 	return true;
