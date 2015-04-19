@@ -1,36 +1,34 @@
 #include <iostream>
 #include <tins/tins.h>
 #include <time.h>
-//#include "packetSniff.h"
-//#include <unordered_map>
 
 using namespace Tins;
 /////////////////////////////////
 //Author: Kenny Trowbridge
-//Last Modified: 4/11
+//Last Modified: 4/19
 /////////////////////////////////
 
 //structures
-typedef struct linkNodeTag {
+typedef struct LinkNodeTag {
 	int count;
 	int totalData;
 	IPv4Address ip;
-	linkNodeTag * next;
-} linkNode;
+	LinkNodeTag * next;
+} LinkNode;
 
 //method declarations
 bool processPacket(const PDU &pdu);
-linkNode* makeNode(IPv4Address addr, int size);
+LinkNode* makeNode(IPv4Address addr, int size);
 bool searchList(const IPv4Address addr, const int size);
-void insertNode(linkNode* node);
-void printList(linkNode* head);
+void insertNode(LinkNode* node);
+void printList(LinkNode* head);
 
 //variables
-static const int SNIFF_TIME = 60;
+static const int SNIFF_TIME = 20;
 
 time_t start;
 //initialize the storage list
-linkNode* head = NULL;
+LinkNode* head = NULL;
 
 int main(){
 	//set the start time of program
@@ -83,7 +81,7 @@ bool processPacket(const PDU &pdu) {
 	if(!searchList(local, raw.payload_size()))
 	{
 		//if it is not found, add it to the tail
-		linkNode* newNode = makeNode(local, raw.payload_size());
+		LinkNode* newNode = makeNode(local, raw.payload_size());
 
 		//insert it at the tail
 		insertNode(newNode);
@@ -98,8 +96,8 @@ bool processPacket(const PDU &pdu) {
 	return true;
 }
 
-void printList(linkNode* head) {
-	linkNode* iterator = head;
+void printList(LinkNode* head) {
+	LinkNode* iterator = head;
 	while(iterator != NULL)
 	{
 		std::cout << "====" << iterator->ip <<"===="<<std::endl;
@@ -108,13 +106,12 @@ void printList(linkNode* head) {
 		std::cout << "==============" << std::endl;
 		iterator = iterator->next;
 	}
-
 }
 
 //search the storage list for this ip node
 bool searchList(const IPv4Address addr, const int size) {
 
-	linkNode* iterator = head;
+	LinkNode* iterator = head;
 	while(iterator != NULL)
 	{//if this ip address is in the list return true
 		if(iterator->ip == addr) 
@@ -131,10 +128,10 @@ bool searchList(const IPv4Address addr, const int size) {
 }
 
 //insert a node into the given list
-void insertNode(linkNode* node) {
+void insertNode(LinkNode* node) {
 	if(node == NULL) return;
 	//copy list head
-	linkNode* iterator = head;
+	LinkNode* iterator = head;
 	if(iterator == NULL)
 	{//if the list is empty, insert node at beginning
 		head = node;
@@ -149,13 +146,13 @@ void insertNode(linkNode* node) {
 	iterator->next = node;
 }
 
-//make a node out of the given address and data size
-linkNode* makeNode(const IPv4Address addr, const int size) {
+// a node out of the given address and data size
+LinkNode* makeNode(const IPv4Address addr, const int size) {
 	//error check
 	if(size < 1) return NULL;
 	
 	//create node pointer
-	linkNode* newNode = (linkNode*)malloc(sizeof(linkNode));
+	LinkNode* newNode = (LinkNode*)malloc(sizeof(LinkNode));
 
 	//error check
 	if(newNode == NULL) return NULL;
@@ -167,4 +164,12 @@ linkNode* makeNode(const IPv4Address addr, const int size) {
 	newNode->next = NULL;
 
 	return newNode;
+}
+
+void merge() {
+
+}
+
+void mergeSort() {
+
 }
