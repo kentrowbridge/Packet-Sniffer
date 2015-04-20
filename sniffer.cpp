@@ -63,19 +63,36 @@ bool processPacket(const PDU &pdu) {
 	//defining local as any address whose first 8 bits = 10
 	AddressRange<IPv4Address> localRange ("10.0.0.1", "10.255.255.255");
 	
-	//if the src is local, set local to src, else local = dst
-	local = localRange.contains(ip.src_addr()) ? ip.src_addr() 
-											   : ip.dst_addr();
-
-	//examine list for local address, if it is already there
-	//increment count and data size, else create a node for it
-	if(!searchList(local, pdu.size(), &head))
+	//if the src is local, add or increment in the list
+	local = ip.src_addr();
+	if(localRange.contains(local))
 	{
-		//if it is not found, add it to the tail
-		LinkNode* newNode = makeNode(local, pdu.size());
+		//examine list for local address, if it is already there
+		//increment count and data size, else create a node for it
+		if(!searchList(local, pdu.size(), &head))
+		{
+			//if it is not found, add it to the tail
+			LinkNode* newNode = makeNode(local, pdu.size());
 
-		//insert it at the tail
-		insertNode(newNode, &head);
+			//insert it at the tail
+			insertNode(newNode, &head);
+		}
+	}
+
+	//if the dst is local, add or increment in the list
+	local = ip.dst_addr();
+	if(localRange.contains(local))
+	{
+		//examine list for local address, if it is already there
+		//increment count and data size, else create a node for it
+		if(!searchList(local, pdu.size(), &head))
+		{
+			//if it is not found, add it to the tail
+			LinkNode* newNode = makeNode(local, pdu.size());
+
+			//insert it at the tail
+			insertNode(newNode, &head);
+		}
 	}
 
 	//print packet src -> dst : size to stdout
