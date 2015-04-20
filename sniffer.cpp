@@ -7,6 +7,8 @@
 using namespace Tins;
 /////////////////////////////////
 //Author: Kenny Trowbridge
+//Author: Casey Sigelmann
+//Author: Matthew Ong
 //Last Modified: 4/20
 /////////////////////////////////
 
