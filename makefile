@@ -2,10 +2,10 @@ sniffer: sniffer.o linknode.o
 	g++ -o sniffer sniffer.o linknode.o -ltins
 
 sniffer.o: sniffer.cpp sniffer.h
-	g++ -c sniffer.cpp sniffer.h -ltins
+	g++ -c sniffer.cpp -ltins
 
 linknode.o: linknode.cpp linknode.h
-	g++ -c linknode.cpp linkenode.h -ltins
+	g++ -c linknode.cpp -ltins
 
 clean:
 	rm -f *.o
