@@ -18,20 +18,21 @@ using namespace Tins;
  * if IP address is not in the list.
  *
  */
-bool searchList(const IPv4Address addr, const int size, LinkNode* head) {
+bool searchList(const IPv4Address addr, const int size, LinkNode** head) {
 	//param check
-	if(size < 0 || head == NULL) return false;
+	if(size < 0 || head == NULL || (*head) == NULL) return false;
+	LinkNode* iterator = (*head);
 
-	while(head != NULL)
+	while(iterator != NULL)
 	{//if this ip address is in the list return true
-		if(head->ip == addr) 
+		if(iterator->ip == addr) 
 		{	
 			//increment count on this node
-			head->count++;
-			head->totalData += size;
+			iterator->count++;
+			iterator->totalData += size;
 			return true;
 		}
-		head = head->next;
+		iterator = iterator->next;
 	}
 	//not found in list
 	return false;
@@ -42,21 +43,23 @@ bool searchList(const IPv4Address addr, const int size, LinkNode* head) {
  * Method takes a linknode and inserts it at the end of the list
  *
  */
-void insertNode(LinkNode* node, LinkNode* head) {
-	if(node == NULL) return;
+void insertNode(LinkNode* node, LinkNode** head) {
+	if(node == NULL || head == NULL) return;
 	//copy list head
-	if(head == NULL)
+	if((*head) == NULL)
 	{//if the list is empty, insert node at beginning
-		head = node;
+		*head = node;
 		return;
 	}
 
-	while(head->next != NULL)
+	LinkNode* iterator = (*head);
+
+	while(iterator->next != NULL)
 	{//find the end of the list
-		head = head->next;
+		iterator = iterator->next;
 	}
 	//instert the node
-	head->next = node;
+	iterator->next = node;
 }
 
 /* makeNode()
@@ -124,13 +127,16 @@ LinkNode* mergeSort(LinkNode* head) {
 	if(head == NULL){return head;}
 	//if head is on its own
 	if(head->next == NULL){return head;}
+
+	LinkNode* iterator = head;
+
 	//split head in two
 	LinkNode * left = NULL;
 	LinkNode * right = NULL;
 	
-	int n = count(head);
-	LinkNode * middle = head->next;
-	LinkNode * previous = head;
+	int n = count(iterator);
+	LinkNode * middle = iterator->next;
+	LinkNode * previous = iterator;
 	
 	int i = 0;
 	//moves up half as many times as there are links
@@ -155,10 +161,11 @@ LinkNode* mergeSort(LinkNode* head) {
  */
 int count(LinkNode* head) {
 	int counter = 0;
-	while(head != NULL)
+	LinkNode* iterator = head;
+	while(iterator != NULL)
 	{
 		counter++;
-		head = head->next;
+		iterator = iterator->next;
 	}
 	return counter;
 }

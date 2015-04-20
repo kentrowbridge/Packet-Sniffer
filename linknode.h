@@ -16,8 +16,8 @@ typedef struct LinkNodeTag {
 } LinkNode;
 
 LinkNode* makeNode(IPv4Address addr, int size);
-bool searchList(const IPv4Address addr, const int size, LinkNode* head);
-void insertNode(LinkNode* node, LinkNode* head);
+bool searchList(const IPv4Address addr, const int size, LinkNode** head);
+void insertNode(LinkNode* node, LinkNode** head);
 LinkNode* merge(LinkNode* left, LinkNode* right);
 int count(LinkNode* head);
 LinkNode* mergeSort(LinkNode* head);

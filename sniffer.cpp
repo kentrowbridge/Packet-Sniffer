@@ -69,13 +69,13 @@ bool processPacket(const PDU &pdu) {
 
 	//examine list for local address, if it is already there
 	//increment count and data size, else create a node for it
-	if(!searchList(local, pdu.size(), head))
+	if(!searchList(local, pdu.size(), &head))
 	{
 		//if it is not found, add it to the tail
 		LinkNode* newNode = makeNode(local, pdu.size());
 
 		//insert it at the tail
-		insertNode(newNode, head);
+		insertNode(newNode, &head);
 	}
 
 	//print packet src -> dst : size to stdout
