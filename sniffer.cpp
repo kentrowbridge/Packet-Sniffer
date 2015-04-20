@@ -22,9 +22,12 @@ LinkNode* makeNode(IPv4Address addr, int size);
 bool searchList(const IPv4Address addr, const int size);
 void insertNode(LinkNode* node);
 void printList(LinkNode* head);
+LinkNode* merge(LinkNode* left, LinkNode* right);
+int count(LinkNode* head);
+LinkNode* mergeSort(LinkNode* head);
 
 //variables
-static const int SNIFF_TIME = 20;
+static const int SNIFF_TIME = 60;
 
 time_t start;
 //initialize the storage list
@@ -49,6 +52,8 @@ int main(){
 
 	std::cout<<"Finished!"<<std::endl;
 
+	mergeSort(head);
+
 	printList(head);
 
 	return 0;
@@ -58,9 +63,6 @@ int main(){
 bool processPacket(const PDU &pdu) {
 	//time check, if past 2 minutes, stop looping
 	if(difftime(time(NULL), start) >= SNIFF_TIME)return false;
-
-	//create a raw pdu to retrieve data for pay load size
-	const RawPDU &raw = pdu.rfind_pdu<RawPDU>();
 
 	//retrieve IP information from PDU
 	const IP &ip = pdu.rfind_pdu<IP>();
@@ -81,7 +83,7 @@ bool processPacket(const PDU &pdu) {
 	if(!searchList(local, raw.payload_size()))
 	{
 		//if it is not found, add it to the tail
-		LinkNode* newNode = makeNode(local, raw.payload_size());
+		LinkNode* newNode = makeNode(local, pdu.size());
 
 		//insert it at the tail
 		insertNode(newNode);
@@ -166,10 +168,62 @@ LinkNode* makeNode(const IPv4Address addr, const int size) {
 	return newNode;
 }
 
-void merge() {
+//merge two lists together and return the result
+LinkNode* merge(LinkNode* left, LinkNode* right) {
+	if(left == NULL) return right;
+	if(right == NULL) return left;
 
+	LinkNode* head = NULL;
+
+	if(left->totalData >= right->totalData)
+	{
+		head = left;
+		head->next = merge(left->next, right);
+		return left;
+	} else {
+		head = right;
+		head->next = merge(left, right->next);
+		return right;
+	}
+
+	return head;
 }
 
-void mergeSort() {
+LinkNode* mergeSort(LinkNode* head) {
+	//error
+	if(head == NULL){return head;}
+	//if head is on its own
+	if(head->next == NULL){return head;}
+	//split head in two
+	LinkNode * left = NULL;
+	LinkNode * right = NULL;
+	
+	int n = count(head);
+	LinkNode * middle = head->next;
+	LinkNode * previous = head;
+	
+	int i = 0;
+	//moves up half as many times as there are links
+	//so middle is the start of the right side and
+	//previous is the end of the left
+	while(middle != NULL && i < (n/2)-1){
+		middle = middle->next;//move up one link
+		previous = previous->next;
+		i++;
+	}
+	right = middle;//makes middle the new start of the right half
+	previous->next = NULL;//chops the list in half
+	left = head;//saves old head to the start of the left half
+	
+	return merge(mergeSort(left), mergeSort(right));
+}
 
+int count(LinkNode* head) {
+	int counter = 0;
+	while(head != NULL)
+	{
+		counter++;
+		head = head->next;
+	}
+	return counter;
 }
