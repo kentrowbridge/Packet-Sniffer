@@ -10,7 +10,7 @@ using namespace Tins;
 
 //method declarations
 bool processPacket(const PDU &pdu);
-void printList(LinkNode* head);
+void printList(LinkNode** head);
 
 //variables
 static const int SNIFF_TIME = 60;

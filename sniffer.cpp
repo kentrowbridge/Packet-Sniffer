@@ -1,6 +1,7 @@
 #include <iostream>
 #include <tins/tins.h>
 #include <time.h>
+#include <string>
 #include "sniffer.h"
 #include "linknode.h"
 
@@ -9,7 +10,7 @@ using namespace Tins;
 //Author: Kenny Trowbridge
 //Author: Casey Sigelmann
 //Author: Matthew Ong
-//Last Modified: 4/20
+//Last Modified: 4/22/15
 /////////////////////////////////
 
 time_t start;
@@ -28,17 +29,19 @@ int main(){
 	//create the packet sniffer to listen on wireless port
 	Sniffer sniffer("wlan0", config);
 
-	std::cout << "Sniffing Packets..." << std::endl;
-	std::cout << "src -> dst : size" <<std::endl;
+	printf("Sniffing Packets...\n");
+	printf("source -> destination : size\n");
 
 	//each packet received will be processed
 	sniffer.sniff_loop(processPacket);
 
-	std::cout<<"Finished!"<<std::endl;
+	printf("Finished!\n");
 
+	//sort the list of IPs
 	mergeSort(head);
 
-	printList(head);
+	//print results of sniffing
+	printList(&head);
 
 	return 0;
 }
@@ -62,7 +65,7 @@ bool processPacket(const PDU &pdu) {
 	//address of the local address in packet
 	IPv4Address local;
 
-	//defining local as any address whose first 8 bits = 10
+	//defining local as any address that starts with 10.
 	AddressRange<IPv4Address> localRange ("10.0.0.1", "10.255.255.255");
 	
 	//if the src is local, add or increment in the list
@@ -99,7 +102,7 @@ bool processPacket(const PDU &pdu) {
 
 	//print packet src -> dst : size to stdout
 	std::cout << ip.src_addr() << "  ->  " 
-		<< ip.dst_addr() << " : " << pdu.size()
+		<< ip.dst_addr() << " : " << pdu.size() << "B"
 		<<std::endl;
 
 	//continue
@@ -112,16 +115,19 @@ bool processPacket(const PDU &pdu) {
  * entries.
  *
  */
-void printList(LinkNode* head) {
+void printList(LinkNode** head) {
+	if(head == NULL) return;
+
+	LinkNode* iterator = (*head);
 	int counter = 0;
 	//print out the first five entries in the list
-	while(head != NULL && counter <= 5)
+	while(iterator != NULL && counter <= 5)
 	{
-		std::cout << "====" << head->ip <<"===="<<std::endl;
-		std::cout << "	number of packets: " << head->count <<std::endl;
-		std::cout << "	total data received/sent: " << head->totalData << std::endl;
+		std::cout << "==== " << iterator->ip <<" ===="<<std::endl;
+		std::cout << "	number of packets: " << iterator->count <<std::endl;
+		std::cout << "	total data received/sent: " << iterator->totalData << "B"<< std::endl;
 		//move to next link
-		head = head->next;
+		iterator = iterator->next;
 		counter++;
 	}
 }
