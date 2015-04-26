@@ -13,6 +13,6 @@ bool processPacket(const PDU &pdu);
 void printList(LinkNode** head);
 
 //variables
-static const int SNIFF_TIME = 60;
+static const int SNIFF_TIME = 180;
 
 #endif

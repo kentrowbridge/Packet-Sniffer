@@ -9,9 +9,9 @@ using namespace Tins;
 
 //structures
 typedef struct LinkNodeTag {
+	IPv4Address ip;
 	int count;
 	int totalData;
-	IPv4Address ip;
 	LinkNodeTag * next;
 } LinkNode;
 
